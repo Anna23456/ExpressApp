@@ -1,0 +1,141 @@
+﻿extends layout
+
+block content
+    h1 Создание трианглуляций
+    div(class='buttons')
+        h3 Масштаб:
+        input(type='button', title='Увеличить', value='+', onclick='changeScale(1)')
+        br
+        input(type='button', title='Уменьшить', value='-', onclick='changeScale(-1)')
+        br
+        br
+        h3 Смещение:
+        input(type='button', title='Вверх', value='↑', onclick='changeCenter(2)')
+        br
+        input(type='button', title='Влево', value='←', onclick='changeCenter(1)')
+        input(id='original', type='button', title='К началу кординат', value='', onclick='changeCenter(-1)')
+        input(type='button', title='Вправо', value='→', onclick='changeCenter(3)')
+        br
+        input(type='button', title='Вниз', value='↓', onclick='changeCenter(0)')
+        br
+        br
+        br
+        form()
+            h3 Триангуляции:
+            select(id='select', size='1', required)
+                option(value = 'new', id = 'select_new') +
+            input(type='button', id='submit', value='Показать')
+    div(class='container')
+        canvas(id='canvas', width='1100px', height ='550px', onmousemove='getCoordinates(event)', onmouseout='clearCoordinates()')
+    div(id='xycoordinates')
+    div(id='footer')
+        li Масштаб изменяется с помощью кнопок "+" и "-".
+        li Положение экрана можно менять стрелками на панели слева.
+        li Прямоугольная кнопка в центре переносит к началу координат(масштаб при этом меняется на изначальный)
+        li Можно создать новую точку или треугольник вызвав меню нажатием правой кнопкой мыши.
+        li В поле триангуляции можно не только отобразить существующие, но и создать новую.
+
+    div.container-menu
+        div.menu(id='contextMenu')
+            li.menu-item
+                button.menu-btn(id='btn-edit-point')   
+                    span.menu-text Редактировать точку
+            li.menu-item
+                button.menu-btn(id='btn-create-point')     
+                    span.menu-text Создать точку
+            li.menu-item
+                button.menu-btn(id='btn-delete-point')    
+                    span.menu-text Удалить точку
+            li.menu-separator
+            li.menu-item
+                button.menu-btn(id='btn-create-triangle')    
+                    span.menu-text Создать треугольник
+            li.menu-item
+                button.menu-btn(id='btn-delete-triangle')    
+                    span.menu-text Удалить треугольник
+    div.menu(id='selectMenu')
+        li.menu-item
+            button.menu-btn(id='delete-select')
+                span.menu-text Удалить
+        li.menu-item
+            button.menu-btn(id='rename-select')
+                span.menu-text Переименовать
+    div.forma(id='forma-edit-point')
+        span.forma-text Редактировать точку
+        br
+        forma()
+            label(for='numb-point')
+                | Номер точки 
+                input.numb-point(type='number', id='numb-edit-point', oninput = 'forma_edit_value(this.value)') 
+            br
+            br
+            span.instructions-text Введите новые координаты 
+            label(for='coordX')
+                | X 
+                input.coordX(type='number', id='x-edit-point')
+            label(for='coordX')
+                | Y 
+                input.coordY(type='number', id='y-edit-point')
+            br
+            br
+            input.forma-submit(type = 'button', id='submit-edit-point', value='Сохранить')
+        input.close(type = 'button', value='Закрыть')
+    div.forma(id='forma-create-point')
+        span.forma-text Создать точку
+        br
+        forma()
+            label(for='coordX')
+                | X 
+                input.coordX(type='number', id='x-create-point')
+            label(for='coordY')
+                | Y 
+                input.coordY(type='number', id='y-create-point')
+            br
+            br
+            input.forma-submit(type = 'button', id='submit-create-point', value='Сохранить')
+        input.close(type = 'button', value='Закрыть')
+    div.forma(id='forma-delete-point')
+        span.forma-text Удалить точку
+        br
+        forma()
+            label(for='numb-point')
+                | Номер точки 
+                input.numb-point(type='number', id='delete-point') 
+            br
+            br
+            input.forma-submit(type = 'button', id='submit-delete-point', value='Сохранить')
+        input.close(type = 'button', value='Закрыть')
+    div.forma(id='forma-create-triangle')
+        span.forma-text Создать треугольник
+        br
+        forma()
+            span.instructions-text Введите номера точек
+            br
+            input.numb-point(type='number', id='numb0-create') 
+            input.numb-point(type='number', id='numb1-create') 
+            input.numb-point(type='number', id='numb2-create') 
+            br
+            br
+            input.forma-submit(type = 'button', id='submit-create-triangle', value='Сохранить')
+        input.close(type = 'button', value='Закрыть')
+    div.forma(id='forma-delete-triangle')
+        span.forma-text Удалить треугольник
+        br
+        forma()
+            span.instructions-text Введите номера точек
+            br
+            input.numb-point(type='number', id='numb0-delete') 
+            input.numb-point(type='number', id='numb1-delete') 
+            input.numb-point(type='number', id='numb2-delete') 
+            br
+            br
+            input.forma-submit(type = 'button', id='submit-delete-triangle', value='Сохранить')
+        input.close(type = 'button', value='Закрыть')
+
+
+        
+    script(src='/javascripts/qq.js', type='text/javascript')
+    script.
+        var points = !{JSON.stringify(coord)};
+        var triangles = !{JSON.stringify(trian)};
+        draw(points, triangles);
